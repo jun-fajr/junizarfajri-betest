@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo
+    container_name: ms-junizarfajri-betest
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: jun
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: db_junizarfajri_betest
+    command: ["--auth"]
+
+  redis:
+    image: redis
+    container_name: redis-junizarfajri-betest
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      context: .
+    container_name: node-app
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/db_junizarfajri_betest
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - mongo
+      - redis
+
+volumes:
+  mongo_data:
+    driver: local
